@@ -1,10 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <style>
+        .map_wrap {position:relative;width:100%;height:350px;}
+        .title {font-weight:bold;display:block;}
+        .hAddr {position:absolute;left:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
+        #centerAddr {display:block;margin-top:2px;font-weight: normal;}
+        .bAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+        #menu_wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 400px;
+            height: 400px;
+            margin: 10px 0 30px 10px;
+            padding: 5px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1;
+            font-size: 12px;
+            border-radius: 10px;
+        }
 
+        .bg_white {
+            background: #fff;
+        }
+
+        #menu_wrap hr {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 2px solid #5F5F5F;
+            margin: 3px 0;
+        }
+
+        #menu_wrap .option {
+            text-align: center;
+        }
+
+        #menu_wrap .option p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6fc3dce29981b178f7dabe1dda337ac3&libraries=services,clusterer"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6fc3dce29981b178f7dabe1dda337ac3"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
+
+<body>
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">전기차 충전소 서비스</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02"
+            aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExample02">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/EVStationMap}"> <!--href="/EVStationMap"-->전기차 충전소 지도 <span
+                        class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/RequestEVStationMap}">충전소가 필요해요!</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 </body>
 </html>
