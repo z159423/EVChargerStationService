@@ -160,11 +160,11 @@
                 var placePosition = new kakao.maps.LatLng(EVRequestMarker['latitude'], EVRequestMarker['longitude']),
                     marker = addMarker(placePosition);
 
-                console.log("마커 위도 : " + EVRequestMarker['latitude'] + " 경도 : " + EVRequestMarker['longitude'] + " 코멘트 : " + EVRequestMarker['markerComment']);
+                console.log("마커아이디:"+EVRequestMarker['id'] +"마커 위도 : " + EVRequestMarker['latitude'] + " 경도 : " + EVRequestMarker['longitude'] + " 코멘트 : " + EVRequestMarker['markerComment']);
 
                 bounds.extend(placePosition);
 
-                (function (marker, comment, RecommendationCount) {
+                (function (marker, comment, RecommendationCount,id) {
                     kakao.maps.event.addListener(marker, 'mouseover', function () {
                         displayInfowindow(marker, comment);
                     });
@@ -178,11 +178,12 @@
                     kakao.maps.event.addListener(marker, 'click', function () {
 
                         //html로 표시될 인포 윈도우의 내용
-                        console.log(comment + " " + RecommendationCount);
-                        setInfowindow(infowindow, comment, RecommendationCount);
+                        console.log(id+""+comment + " " + RecommendationCount);
+
+                        setInfowindow(infowindow, comment, RecommendationCount,id);
 
                     });
-                })(marker, EVRequestMarker['markerComment'], EVRequestMarker['recommendationCount']);
+                })(marker, EVRequestMarker['markerComment'], EVRequestMarker['recommendationCount'],EVRequestMarker['id']);
 
                 // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
                 // 불러온 가게 DB의 개수가 0개 일때 재설정 하면 카카오맵이 사라짐
@@ -214,20 +215,20 @@
         {
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ "충전소가 필요해요!<br>" + "<Strong>코멘트 : </Strong>" + comment + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '공감수 : ' + recommendationCount + "<br>" + '</div>' +
-                '<div> <form onsubmit="; return false;"> <button type="submit" class="btn btn-dark" style="width: 100%;" onclick="clickRecomentationButton(id)">공감!</button> </form><br> </div>');
+                '<div>  <button type="submit" class="btn btn-dark" style="width: 100%;" onclick="clickRecomentationButton('+id+','+recommendationCount+')">공감!</button> <br> </div>');
         }
 
         //공감 버튼 클릭시
-        function clickRecomentationButton(id)
+        function clickRecomentationButton(id,recommendationCount)
         {
-
             $.ajax({
-                url: path+"/",
-                type: "POST",
-                contentType: "application/json;charset=UTF-8",
-                data:JSON.stringify(submitObj),
-                dataType : "json",
+                url: "/RequestEVStationMap/update",
+                type: "GET",
                 async: false,
+                data: {
+                    id:id,
+                    count:recommendationCount,
+                },
             })
                 .done(function(resMap) {
                     alert("추천하였습니다.");

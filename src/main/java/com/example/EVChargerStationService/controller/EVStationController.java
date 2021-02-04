@@ -6,17 +6,24 @@ import com.example.EVChargerStationService.repository.EVStationRepository;
 import com.example.EVChargerStationService.repository.RequestEVStationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -46,9 +53,22 @@ public class EVStationController {
     public String RequestEVStationMap(Model model) {
         List<RequestEVStation> markerlist = new ArrayList<>();
         requestEvStationRepository.findAll().forEach(e -> markerlist.add(e));
-
         log.info("마커 개수 : " + String.valueOf(markerlist.size()));
         model.addAttribute("markers", markerlist);
+
+        return "/RequestEVStationMap";
+    }
+
+    @GetMapping("/RequestEVStationMap/update")
+    public String RequestEVStationMapUpdate(HttpServletRequest httpServletRequest, Model model) {
+        int recomID = Integer.parseInt(httpServletRequest.getParameter("id"));
+        int recomCount = Integer.parseInt(httpServletRequest.getParameter("count"));
+        Optional<RequestEVStation> req = requestEvStationRepository.findById((long) recomID);
+        req.ifPresent(selectID ->{
+            selectID.setRecommendationCount(recomCount+1);
+            RequestEVStation newRequestEVStation = requestEvStationRepository.save(selectID);
+            log.info("count 개수 : " + newRequestEVStation);
+        });
 
         return "/RequestEVStationMap";
     }
