@@ -24,7 +24,14 @@ public class EVStationController {
 
     //전기차 충전소 위치정보 페이지
     @GetMapping("/EVStationMap")
-    public String EVChargingStationMap() {
+    public String EVChargingStationMap(Model model) {
+
+        List<EVStation> EVStationList = new ArrayList<>();
+        // evStationRepository.findAll().forEach(e -> EVStationList.add(e));
+        EVStationList = (List<EVStation>)evStationRepository.findAll();
+
+        log.info("충전소 개수 : " + String.valueOf(EVStationList.size()));
+        model.addAttribute("stations", EVStationList);
 
         return "/EVstationMap";
     }
