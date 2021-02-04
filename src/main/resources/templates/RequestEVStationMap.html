@@ -48,10 +48,18 @@
         // 주소-좌표 변환 객체를 생성합니다
         var geocoder = new kakao.maps.services.Geocoder();
 
+        //이미 열려있는 인포윈도우
         var preInfowindow;
 
         //마커 생성을 위한 객체
         var marker = new kakao.maps.Marker();
+
+        //마커 사이즈, 이미지
+        var imageSize = new kakao.maps.Size(30, 41);
+        var ledMarkerImg = "/img/markerled01.png";
+
+        //카카오 MarkerImage 객체에 사이즈와 이미지를 넣기
+        var markerImage = new kakao.maps.MarkerImage(ledMarkerImg, imageSize);
 
         var infowindow = new kakao.maps.InfoWindow({zIndex: 1, removable: true});
 
@@ -134,7 +142,6 @@
                     marker.setMap(map);*/
                 }
             });
-
         });
 
         function searchDetailAddrFromCoords(coords, callback) {
@@ -202,6 +209,7 @@
         function addMarker(position) {
             marker = new kakao.maps.Marker({
                 position: position, // 마커의 위치
+                image : markerImage
             });
 
             marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -209,7 +217,6 @@
 
             return marker;
         }
-
 
         function setInfowindow(infowindow, comment, recommendationCount, id)
         {

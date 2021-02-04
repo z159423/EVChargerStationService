@@ -54,9 +54,15 @@
             map.setCenter(locPosition);
         }
 
+        //마커를 담기위한 배열
         var markers = [];
 
-        var imageSize = new kakao.maps.Size(24, 35);
+        //마커 사이즈, 이미지
+        var imageSize = new kakao.maps.Size(30, 41);
+        var blueMarkerImg = "/img/markerblue01.png";
+
+        //카카오 MarkerImage 객체에 사이즈와 이미지를 넣기
+        var markerImage = new kakao.maps.MarkerImage(blueMarkerImg, imageSize);
 
         // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
         var infowindow = new kakao.maps.InfoWindow({
@@ -76,7 +82,8 @@
 
             var marker = new kakao.maps.Marker({
                 //map: map,
-                position: coords
+                position: coords,
+                image : markerImage
             });
 
             (function (marker, location,roadAddress,standardChargerNum,normalChargerNum,supportedVehicles) {
@@ -126,6 +133,11 @@
 
             $('.link1').prop('href', link);
         }
+
+        //확대 또는 축소가 되면 인포 윈도우가 사라지도록 이벤트 등록
+        kakao.maps.event.addListener(map, 'zoom_changed', function() {
+            infowindow.close();
+        });
     </script>
 </div>
 
