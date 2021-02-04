@@ -4,11 +4,6 @@ import lombok.*;
 
 import javax.persistence.Entity;
 
-@Entity
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class EVStation {
 }
