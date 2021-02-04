@@ -209,12 +209,32 @@
             return marker;
         }
 
+
         function setInfowindow(infowindow, comment, recommendationCount, id)
         {
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ "충전소가 필요해요!<br>" + "<Strong>코멘트 : </Strong>" + comment + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '공감수 : ' + recommendationCount + "<br>" + '</div>' +
                 '<div> <form onsubmit="; return false;"> <button type="submit" class="btn btn-dark" style="width: 100%;" onclick="clickRecomentationButton(id)">공감!</button> </form><br> </div>');
         }
+
+        //공감 버튼 클릭시
+        function clickRecomentationButton(id)
+        {
+
+            $.ajax({
+                url: path+"/",
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                data:JSON.stringify(submitObj),
+                dataType : "json",
+                async: false,
+            })
+                .done(function(resMap) {
+                    alert("추천하였습니다.");
+                    location.reload();
+                });
+        }
+
     </script>
 </div>
 

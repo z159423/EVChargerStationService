@@ -42,11 +42,16 @@ public class EVStationController {
 
     //충전소가 필요한 위치에 마커를 표시하는 페이지
     @GetMapping("/RequestEVStationMap")
-    public String RequestEVStationMap() {
+    public String RequestEVStationMap(Model model) {
+        List<RequestEVStation> markerlist = new ArrayList<>();
+        requestEvStationRepository.findAll().forEach(e -> markerlist.add(e));
 
+        log.info("마커 개수 : " + String.valueOf(markerlist.size()));
+        model.addAttribute("markers", markerlist);
 
         return "/RequestEVStationMap";
     }
+
 
     @GetMapping("/apitest")
     public String callapihttp() {
