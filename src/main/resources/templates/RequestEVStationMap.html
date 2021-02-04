@@ -77,6 +77,120 @@
             map.setCenter(locPosition);
         }
 
+        displayMarkers();
+
+        //지도에 클릭이벤트를 등록합니다.
+        //클릭이벤트트
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+
+            // 클릭한 위도, 경도 정보를 가져옵니다
+            var latlng = mouseEvent.latLng;
+
+            var latnum = latlng.getLat();
+            var lngnum = latlng.getLng();
+
+            var iwContent = '<div style="padding:5px; width: 300px; height: 200px;">이곳에 전기차 충전소가 필요하신가요?' +
+                '<div> <form action="/EVStationMarkerCreate" method="get"> <textarea name="Comment" style="resize: none; width: 100%; height: 120px;" placeholder="의견이 있다면 적어주세요."></textarea>' +
+                '<button type="submit" class="btn btn-dark" style="width: 100%;"> 등록하기!</button> ' +
+                '<input type="text" id="latitude" name="latitude" style="visibility: hidden">' +
+                '<input type="text" id="longitude" name="longitude" style="visibility: hidden">' +
+                '<input type="text" name="RecommendationCount" value="0" style="visibility: hidden">' +
+                '</form> </div>' +
+                '</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+                iwPosition = new kakao.maps.LatLng(latlng.getLat(), latlng.getLng()), //인포윈도우 표시 위치입니다
+                iwRemoveable = true; // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+            //이미 인포윈도우가 켜져 있으면 인포윈도우 삭제하기
+            if (preInfowindow) {
+                preInfowindow.close();
+            }
+
+            // 인포윈도우를 생성하고 지도에 표시합니다
+            var infowindow = new kakao.maps.InfoWindow({
+                map: map, // 인포윈도우가 표시될 지도
+                position: iwPosition,
+                content: iwContent,
+                removable: iwRemoveable
+            });
+
+            document.getElementById("latitude").value = String(latnum);
+            document.getElementById("longitude").value = String(lngnum);
+
+            preInfowindow = infowindow;
+
+            var clickedAddress = document.getElementById('clickedAddress');
+
+            //clickedAddress.innerHTML = result[i].address_name;
+
+            searchDetailAddrFromCoords(mouseEvent.latLng, function (result, status) {
+                if(status === kakao.maps.services.Status.OK) {
+                    var detailAddr = !!result[0].road_address ?  '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+                    detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+
+                    clickedAddress.innerHTML = '<strong>클릭한 곳의 주소 : </strong><br>' + detailAddr;
+
+                    //마커를 생성하는 함수들
+                    /*marker.setPosition(mouseEvent.latLng);
+                    marker.setMap(map);*/
+                }
+            });
+
+        });
+
+        function searchDetailAddrFromCoords(coords, callback) {
+            // 좌표로 법정동 상세 주소 정보를 요청합니다
+            geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        }
+
+        function displayMarkers() {
+
+            //console.log(keyword.length);
+
+            var bounds = new kakao.maps.LatLngBounds();
+
+            var markerlist = [[${markers}]];
+
+            console.log(markerlist.length);
+
+            for (var i = 0; i < markerlist.length; i++) {
+                var EVRequestMarker = markerlist[i];
+
+                console.log(EVRequestMarker);
+
+                var placePosition = new kakao.maps.LatLng(EVRequestMarker['latitude'], EVRequestMarker['longitude']),
+                    marker = addMarker(placePosition);
+
+                console.log("마커 위도 : " + EVRequestMarker['latitude'] + " 경도 : " + EVRequestMarker['longitude'] + " 코멘트 : " + EVRequestMarker['markerComment']);
+
+                bounds.extend(placePosition);
+
+                (function (marker, comment, RecommendationCount) {
+                    kakao.maps.event.addListener(marker, 'mouseover', function () {
+                        displayInfowindow(marker, comment);
+                    });
+
+                    /*kakao.maps.event.addListener(marker, 'mouseout', function() {
+
+                        infowindow.close();
+                    });*/
+
+                    //마커 클릭 이벤트, 마커의 위도 경도 나타냄
+                    kakao.maps.event.addListener(marker, 'click', function () {
+
+                        //html로 표시될 인포 윈도우의 내용
+                        console.log(comment + " " + RecommendationCount);
+                        setInfowindow(infowindow, comment, RecommendationCount);
+
+                    });
+                })(marker, EVRequestMarker['markerComment'], EVRequestMarker['recommendationCount']);
+
+                // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+                // 불러온 가게 DB의 개수가 0개 일때 재설정 하면 카카오맵이 사라짐
+                map.setBounds(bounds);
+
+            }
+        }
+
         function displayInfowindow(marker, comment) {
             var content = '<div style="padding:5px;z-index:1;">' + comment + '</div>';
 
