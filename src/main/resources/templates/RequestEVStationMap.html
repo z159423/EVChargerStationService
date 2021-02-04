@@ -76,6 +76,31 @@
 
             map.setCenter(locPosition);
         }
+
+        function displayInfowindow(marker, comment) {
+            var content = '<div style="padding:5px;z-index:1;">' + comment + '</div>';
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+
+        function addMarker(position) {
+            marker = new kakao.maps.Marker({
+                position: position, // 마커의 위치
+            });
+
+            marker.setMap(map); // 지도 위에 마커를 표출합니다
+            //markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+            return marker;
+        }
+
+        function setInfowindow(infowindow, comment, recommendationCount, id)
+        {
+            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ "충전소가 필요해요!<br>" + "<Strong>코멘트 : </Strong>" + comment + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '공감수 : ' + recommendationCount + "<br>" + '</div>' +
+                '<div> <form onsubmit="; return false;"> <button type="submit" class="btn btn-dark" style="width: 100%;" onclick="clickRecomentationButton(id)">공감!</button> </form><br> </div>');
+        }
     </script>
 </div>
 
