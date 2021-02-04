@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -50,6 +51,19 @@ public class EVStationController {
         model.addAttribute("markers", markerlist);
 
         return "/RequestEVStationMap";
+    }
+
+    //마커를 새로 생성
+    @GetMapping("/EVStationMarkerCreate")
+    public String CreateEVStationMarker(@RequestParam("Comment") String comment, @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @RequestParam("RecommendationCount") int RecommendationCount) {
+        //System.out.println(form.toString());
+
+        RequestEVStation requestEVStation = new RequestEVStation(null, latitude, longitude, comment, RecommendationCount);
+
+        RequestEVStation saved = requestEvStationRepository.save(requestEVStation);
+        System.out.println(saved.toString());
+
+        return "redirect:/RequestEVStationMap";
     }
 
 
