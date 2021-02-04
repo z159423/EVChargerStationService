@@ -1,4 +1,7 @@
 package com.example.EVChargerStationService.repository;
 
-public interface EVStationRepository {
+import com.example.EVChargerStationService.entity.EVStation;
+import org.springframework.data.repository.CrudRepository;
+
+public interface EVStationRepository extends CrudRepository<EVStation,Long> {
 }
