@@ -32,9 +32,6 @@
         var zoomControl = new kakao.maps.ZoomControl();
         map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new kakao.maps.services.Geocoder();
-
         // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
         if (navigator.geolocation) {
 
@@ -67,7 +64,68 @@
             removable : true
         });
 
+        var geocoder = new kakao.maps.services.Geocoder();
 
+        var stations = new Array();
+        stations = [[${stations}]];
+
+        for (var i = 0; i < stations.length; i++) {
+            var station = stations[i];
+
+            var coords = new kakao.maps.LatLng(station['latitude'], station['longitude']);
+
+            var marker = new kakao.maps.Marker({
+                //map: map,
+                position: coords
+            });
+
+            (function (marker, location,roadAddress,standardChargerNum,normalChargerNum,supportedVehicles) {
+                kakao.maps.event.addListener(marker, 'mouseover', function () {
+                    displayInfowindow(marker, location);
+                });
+
+                //마커 클릭 이벤트, 마커의 위도 경도 나타냄
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    //displayInfowindow_coord(marker);
+
+                    //html로 표시될 인포 윈도우의 내용
+                    setInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles);
+                });
+            })(marker, station['location'],station['roadAddress'],station['standardChargerNum'],station['normalChargerNum'],station['supportedVehicles']);
+
+            markers.push(marker)
+        }
+
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            markers: markers,
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 8, // 클러스터 할 최소 지도 레벨
+            disableClickZoom: false
+        });
+
+        clusterer.addMarkers(markers);
+
+        //마우스 올렸을때의 인포윈도우
+        function displayInfowindow(marker, location) {
+            var content = '<div style="padding:5px;z-index:1;">' + location + " 충전소" + '</div>';
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+
+        //인포윈도우 생성
+        function setInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles, latitude, longtitude)
+        {
+            var link = "https://map.kakao.com/link/map/" + location +","+latitude+","+longtitude;
+            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ location + " 충전소" + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>도로명주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>급속충전기 : </strong>'  + standardChargerNum + '<strong> 완속충전기 : </strong>' + normalChargerNum + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>지원차종 : </strong>'  + supportedVehicles + "<br><br>" + '</div>' +
+                '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
+
+            $('.link1').prop('href', link);
+        }
     </script>
 </div>
 
