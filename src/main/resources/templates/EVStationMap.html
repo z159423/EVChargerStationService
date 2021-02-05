@@ -250,6 +250,8 @@
         function setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargerType, useTime, stat, statUpdDt, busiCall, parkingFree)
         {
             var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longitude;
+
+
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>사용 가능 시간 : </strong>'  + useTime + "<br>" + '</div>' +
