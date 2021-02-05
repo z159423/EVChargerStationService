@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @SequenceGenerator(
         name="EVStation_SEQ_GEN", //시퀀스 제너레이터 이름
@@ -35,11 +35,11 @@ public class RequestEVStation {
     @Column(name = "RECOMMENDATIONCOUNT")
     int recommendationCount;    //추천
 
-    /*public RequestEVStation(Long id, String latitude, String longitude, String markerComment, int recommendationCount) {
+    public RequestEVStation(Long id, String latitude, String longitude, String markerComment, int recommendationCount) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.markerComment = markerComment;
         this.recommendationCount = recommendationCount;
-    }*/
+    }
 }
