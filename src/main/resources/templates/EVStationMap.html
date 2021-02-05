@@ -105,7 +105,7 @@
 
             (function (marker, location,roadAddress,standardChargerNum,normalChargerNum,supportedVehicles) {
                 kakao.maps.event.addListener(marker, 'mouseover', function () {
-                    displayInfowindow(marker, location);
+                    displayInfowindow(marker, location, "충전소");
                 });
 
                 //마커 클릭 이벤트, 마커의 위도 경도 나타냄
@@ -138,7 +138,7 @@
 
             (function (marker, name, roadAddress, phonenumber, latitude, longtitude) {
                 kakao.maps.event.addListener(marker, 'mouseover', function () {
-                    displayInfowindow(marker, name);
+                    displayInfowindow(marker, name, "정비소");
                 });
 
                 //마커 클릭 이벤트, 마커의 위도 경도 나타냄
@@ -233,8 +233,8 @@
         }
 
         //마우스 올렸을때의 인포윈도우
-        function displayInfowindow(marker, location) {
-            var content = '<div style="padding:5px;z-index:1;">' + location + " 충전소" + '</div>';
+        function displayInfowindow(marker, location, value1) {
+            var content = '<div style="padding:5px;z-index:1;">' + location + value1 + '</div>';
 
             infowindow.setContent(content);
             infowindow.open(map, marker);
