@@ -251,15 +251,54 @@
         {
             var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longitude;
 
+            var statString;
+
+            switch ( stat ) {
+                case '0':
+                    statString = "";
+                    break;
+                case '1':
+                    statString = "통신이상";
+                    break;
+                case '2':
+                    statString = "사용가능";
+                    break;
+                case '3':
+                    statString = "충전중";
+                    break;
+                case '4':
+                    statString = "운영중지";
+                    break;
+                case '5':
+                    statString = "점검중";
+                    break;
+                case '9':
+                    statString = "상태미확인";
+                    break;
+
+                default:
+                    statString = "";
+            }
+
+            var parkingString;
+
+            switch ( parkingFree ) {
+                case 'Y':
+                    parkingString = "유료";
+                    break;
+                case 'N':
+                    parkingString = "무료";
+                    break;
+            }
 
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>사용 가능 시간 : </strong>'  + useTime + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 타입 : </strong>'  + chargerType + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + stat + "<br><br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>업데이트 시간 : </strong>'  + statUpdDt + "<br><br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>'  + busiCall + "<br><br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 유료 여부: </strong>'  + parkingFree + "<br><br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + statString + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>업데이트 시간 : </strong>'  + statUpdDt + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>'  + busiCall + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 : </strong>'  + parkingString + "<br>" + '</div>' +
                 '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
 
             $('.link1').prop('href', link);
