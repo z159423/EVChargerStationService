@@ -1,7 +1,5 @@
 package com.example.EVChargerStationService.dto;
 
-import com.example.EVChargerStationService.entity.RequestEVStation;
-import com.example.EVChargerStationService.entity.EVStation;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,17 +9,28 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class EVStationForm {
-    //public EVStation toEntity()
-    //{
-       // return new EVStation(null,roadAddress,latitude,longitude,chargertype);
-   // }
-    private int id; //id
-    //private String location;            //설치위치
-    private String roadAddress;         //도로명주소
+
+    private String name;                //충전소이름
+    private String roadAddress;         //주소
     private String latitude;            //위도
     private String longitude;           //경도
-    //private int standardChargerNum;     //급속충전기 대수
-    //private int normalChargerNum;       //완속충전기 대수
-    //private String supportedVehicles;   //지원차종
-    private String chargertype;
+    private String chargerType;         //충전기타입(01:DC차데모,02: AC완속,03: DC차데모+AC3상,04: DC콤보,05: DC차데모+DC콤보, 06: DC차데모+AC3상+DC콤보,07: AC3상)
+
+    private String useTime;              //이용가능시간
+    private int stat;                    //충전기상태(1: 통신이상, 2: 충전대기,3: 충전중, 4: 운영중지,5: 점검중, 9: 상태미확인)
+    private String statUpdDt;            //상태갱신일시   예):20190829121020
+    private String busiCall;             //충전기 운영기관 연락처
+
+
+    //기존에 있던 폼
+    /*private String location;            //설치위치
+    private String roadAddress;         //주소
+    private String latitude;            //위도
+    private String longitude;           //경도
+    private String chargerType;         //충전기타입(01:DC차데모,02: AC완속,03: DC차데모+AC3상,04: DC콤보,05: DC차데모+DC콤보, 06: DC차데모+AC3상+DC콤보,07: AC3상)
+
+    private String useTime;              //이용가능시간
+    private int stat;                    //충전기상태(1: 통신이상, 2: 충전대기,3: 충전중, 4: 운영중지,5: 점검중, 9: 상태미확인)
+    private String statUpdDt;            //상태갱신일시   예):20190829121020
+    private String busiCall;             //충전기 운영기관 연락처*/
 }

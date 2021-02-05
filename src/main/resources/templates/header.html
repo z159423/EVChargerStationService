@@ -43,6 +43,14 @@
         #menu_wrap .option p {
             margin: 10px 0;
         }
+
+        .category, .category *{margin:0;padding:0;color:#000;}
+        .category {position:absolute;overflow:hidden;top:100px;left:10px;width:101px;height:50px;z-index:10;border:1px solid black;font-family:'Malgun Gothic','맑은 고딕',sans-serif;font-size:12px;text-align:center;background-color:#fff;}
+        .category .menu_selected {background:#FF5F4A;color:#fff;border-left:1px solid #915B2F;border-right:1px solid #915B2F;margin:0 -1px;}
+        .category li{list-style:none;float:left;width:50px;height:45px;padding-top:5px;cursor:pointer;}
+        .category .ico_comm {display:block;margin:0 auto 2px;width:22px;height:26px;background:url('/img/menuimg.png') no-repeat;}
+        .category .ico_EVChargerStation {background-position:-10px -36px;}
+        .category .ico_repairShop {background-position:-10px 0;}
     </style>
 </head>
 
@@ -53,8 +61,11 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
 
 <body>
-<nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">전기차 충전소 서비스</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <img src="/img/logo1.png" width="50" height="50" alt="">
+    </a>
+    <!--<a class="navbar-brand" href="#">전기차 충전소 서비스</a>-->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02"
             aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
