@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class EVStationForm {
 
-    private String location;            //설치위치
+    private String name;                //충전소이름
     private String roadAddress;         //주소
     private String latitude;            //위도
     private String longitude;           //경도
