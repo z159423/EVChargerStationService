@@ -103,9 +103,9 @@
                 image : markerImage
             });
 
-            (function (marker, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree) {
+            (function (marker, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree,powerType) {
                 kakao.maps.event.addListener(marker, 'mouseover', function () {
-                    displayInfowindow(marker, name, "충전소");
+                    displayInfowindow(marker, name, "충전소  ");
                 });
 
                 //마커 클릭 이벤트, 마커의 위도 경도 나타냄
@@ -113,10 +113,10 @@
                     //displayInfowindow_coord(marker);
 
                     //html로 표시될 인포 윈도우의 내용
-                    setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree);
+                    setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree,powerType);
                 });
             })(marker, station['name'], station['roadAddress'], station['latitude'],station['longitude'],
-                station['chargertype'],station['useTime'],station['stat'],station['statUpdDt'],station['busiCall'],station['parkingFree']);
+                station['chargertype'],station['useTime'],station['stat'],station['statUpdDt'],station['busiCall'],station['parkingFree'] ,station['powerType']);
 
             chargerMarkers.push(marker)
         }
@@ -247,37 +247,41 @@
         });
 
         //충전소 인포윈도우 생성
-        function setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargerType, useTime, stat, statUpdDt, busiCall, parkingFree)
+        function setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude,
+                                        chargerType, useTime, stat, statUpdDt, busiCall, parkingFree, powerType)
         {
             var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longitude;
+
+            var link2 = "https://map.kakao.com/link/to/" + name +","+latitude+","+longitude;
+
 
             var statString;
 
             switch ( stat ) {
                 case '0':
-                    statString = "";
+                    statString = "정보없음";
                     break;
                 case '1':
-                    statString = "통신이상";
+                    statString = "<a style=\"color:#f61a1a;\"> 통신이상 </a>";
                     break;
                 case '2':
-                    statString = "사용가능";
+                    statString = "<a style=\"color:#009900;\"> 사용가능 </a>";
                     break;
                 case '3':
-                    statString = "충전중";
+                    statString = "<a style=\"color:#ffa700;\"> 사용중 </a>";
                     break;
                 case '4':
-                    statString = "운영중지";
+                    statString = "<a style=\"color:#f61a1a;\"> 운영중지 </a>";
                     break;
                 case '5':
-                    statString = "점검중";
+                    statString = "<a style=\"color:#9f9f9f;\"> 점검중 </a>";
                     break;
                 case '9':
                     statString = "상태미확인";
                     break;
 
                 default:
-                    statString = "";
+                    statString = "정보없음";
             }
 
             var parkingString;
@@ -291,17 +295,107 @@
                     break;
             }
 
-            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>사용 가능 시간 : </strong>'  + useTime + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 타입 : </strong>'  + chargerType + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + statString + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>업데이트 시간 : </strong>'  + statUpdDt + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>'  + busiCall + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 : </strong>'  + parkingString + "<br>" + '</div>' +
-                '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
+            var chargerTypeString;
 
-            $('.link1').prop('href', link);
+            switch ( chargerType ) {
+                case '01':
+                    chargerTypeString = ":DC차데모";
+                    break;
+                case '02':
+                    chargerTypeString = "AC완속";
+                    break;
+                case '03':
+                    chargerTypeString = "DC차데모+AC3상";
+                    break;
+                case '04':
+                    chargerTypeString = "DC콤보";
+                    break;
+                case '05':
+                    chargerTypeString = "DC차데모+DC콤보";
+                    break;
+                case '06':
+                    chargerTypeString = "DC차데모+AC3상+DC콤보";
+                    break;
+                case '07':
+                    chargerTypeString = "AC3상";
+                    break;
+
+                default:
+                    chargerTypeString = "정보없음";
+            }
+
+            let Time = [[${currentTime}]];
+
+            var chargingTime;
+
+            switch ( powerType ) {
+                case '급속(50kW)':
+                    chargingTime = 100;
+                    break;
+                case '급속(100kW동시)':
+                    chargingTime = 60;
+                    break;
+
+                case '급속(100kW멀티)':
+                    chargingTime = 60;
+                    break;
+
+                case '급속(200kW동시)':
+                    chargingTime = 50;
+                    break;
+
+                case '급속(200kW멀티)':
+                    chargingTime = 50;
+                    break;
+
+                case '급속(400kW동시)':
+                    chargingTime = 40;
+                    break;
+
+                case '급속(400kW멀티)':
+                    chargingTime = 40;
+                    break;
+
+                default:
+                    chargerTypeString = 120;
+            }
+
+            var predictionTime = String(chargingTime - parseInt(parseInt(Time) - parseInt(statUpdDt.substring(0,12))));
+            202102060557
+
+
+
+            if(stat == '3')
+            {
+                infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>이용가능시간 : </strong>'  + useTime + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 타입 : </strong>'  + chargerTypeString + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전량 : </strong>'  + powerType + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + statString + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>예상 사용가능 시간 : </strong>'  + predictionTime + " 분후" + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>' + '<a style="color:#009900;">' +busiCall+'</a>'+ "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 : </strong>'  + parkingString+ "<br>" + '</div>' +
+                    '<div><a class="link1" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank" >큰지도보기 </a> <a class="link2" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank"> 길찾기</a></div><br>');
+
+                $('.link1').prop('href', link);
+                $('.link2').prop('href', link2);
+            }else
+            {
+                infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>이용가능시간 : </strong>'  + useTime + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 타입 : </strong>'  + chargerTypeString + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전량 : </strong>'  + powerType + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + statString + "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>' + '<a style="color:#009900;">' +busiCall+'</a>'+ "<br>" + '</div>' +
+                    '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 : </strong>'  + parkingString+ "<br>" + '</div>' +
+                    '<div><a class="link1" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank" >큰지도보기 </a> <a class="link2" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank"> 길찾기</a></div><br>');
+
+                $('.link1').prop('href', link);
+                $('.link2').prop('href', link2);
+            }
+
         }
 
         //정비소 인포윈도우 생성
@@ -310,12 +404,12 @@
             var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longtitude;
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + "<br>" + '</div>' +
                 '<div style="padding:5px;font-size:12px;">' + '<strong>도로명주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>전화번호 : </strong>'  + phonenumber + "<br>" + '</div>' +
-                '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
+                '<div style="padding:5px;font-size:12px;">' + '<strong>전화번호 : </strong>'  + '<a style="color:#009900;">' +phonenumber+'</a>'+ "<br>" + '</div>' +
+                '<div><a class="link1" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank" >큰지도보기 </a> <a class="link2" href="" style="color:blue; border: 1px solid cadetblue;" target="_blank"> 길찾기</a></div><br>');
 
             $('.link1').prop('href', link);
+            $('.link2').prop('href', link2);
         }
-
 
     </script>
 </div>

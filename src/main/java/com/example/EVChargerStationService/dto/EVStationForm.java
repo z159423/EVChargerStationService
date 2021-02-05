@@ -21,6 +21,7 @@ public class EVStationForm {
     private String statUpdDt;            //상태갱신일시   예):20190829121020
     private String busiCall;             //충전기 운영기관 연락처
     private String parkingFree;          //주차장 무료 = Y / 유료 = N
+    private String powerType;            //충전량
 
 
     //기존에 있던 폼

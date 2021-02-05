@@ -51,6 +51,11 @@
         .category .ico_comm {display:block;margin:0 auto 2px;width:22px;height:26px;background:url('/img/menuimg.png') no-repeat;}
         .category .ico_EVChargerStation {background-position:-10px -36px;}
         .category .ico_repairShop {background-position:-10px 0;}
+
+        .nav-item:hover {
+            border-bottom: 2px solid #2B3D95;
+        }
+        a, div, p{font-family: 'Nanum Gothic Coding', monospace;}
     </style>
 </head>
 
@@ -74,11 +79,11 @@
     <div class="collapse navbar-collapse" id="navbarsExample02">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/EVStationMap}"> <!--href="/EVStationMap"-->전기차 충전소 지도 <span
+                <a class="nav-link" th:href="@{/EVStationMap}" style="font-family: 'Nanum Gothic Coding', monospace; font-size: 20px"><strong>[전기차 충전소 지도]</strong> <span
                         class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/RequestEVStationMap}">충전소가 필요해요!</a>
+            <li class="nav-item" style="font-family: 'Nanum Gothic Coding', monospace; font-size: 20px">
+                <a class="nav-link" th:href="@{/RequestEVStationMap}"><strong> [충전소가 필요해요!]</strong></a>
             </li>
         </ul>
     </div>

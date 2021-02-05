@@ -43,9 +43,9 @@ public class RemoteController {
     @Autowired
     private EVStationRepository evStationRepository;
 
-    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree){
+    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree, String powerType){
 
-        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree);
+        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree, powerType);
 
         /*evstation.setlatitude(lat);
         evstation.setlongitude(lng);
@@ -99,7 +99,7 @@ public class RemoteController {
                         setstationvalue(getTagValue("statNm", element), getTagValue("lat", element), getTagValue("lng", element),
                                         getTagValue("addr", element), getTagValue("chgerType", element),getTagValue("useTime", element),
                                         getTagValue("stat", element), getTagValue("statUpdDt", element), getTagValue("busiCall", element),
-                                        getTagValue("parkingFree", element));
+                                        getTagValue("parkingFree", element), getTagValue("powerType", element));
 
                     }//if
 

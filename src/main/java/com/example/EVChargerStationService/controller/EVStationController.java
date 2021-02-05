@@ -29,7 +29,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +72,19 @@ public class EVStationController {
 
         log.info("정비소 개수 : " + String.valueOf(RepairShopList.size()));
         model.addAttribute("repairshops", RepairShopList);
+
+        SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+
+        Calendar time = Calendar.getInstance();
+
+        String format_time1 = format1.format(time.getTime());
+
+        format_time1 = format_time1.replaceAll("-","");
+        format_time1 = format_time1.replaceAll(":","");
+        format_time1 = format_time1.replaceAll(" ","");
+        format_time1 = format_time1.substring(0, 12);
+
+        model.addAttribute("currentTime", format_time1);
 
         return "/EVstationMap";
     }
@@ -182,7 +197,7 @@ public class EVStationController {
                         setstationvalue(getTagValue("statNm", element), getTagValue("lat", element), getTagValue("lng", element),
                                 getTagValue("addr", element), getTagValue("chgerType", element),getTagValue("useTime", element),
                                 getTagValue("stat", element), getTagValue("statUpdDt", element), getTagValue("busiCall", element),
-                                getTagValue("parkingFree", element));
+                                getTagValue("parkingFree", element), getTagValue("powerType", element));
 
                     }//if
 
@@ -206,9 +221,9 @@ public class EVStationController {
         return "redirect:/EVStationMap";
     }//main
 
-    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree){
+    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree, String powerType){
 
-        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree);
+        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree, powerType);
 
         /*evstation.setlatitude(lat);
         evstation.setlongitude(lng);

@@ -47,7 +47,12 @@ public class EVStation {
     @Column(name = "PARKINGFREE")
     private String parkingFree;          //주차장 무료 = Y / 유료 = N
 
-    public EVStation(Long id, String name, String roadAddress, String latitude, String longitude, String chargertype, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree) {
+    @Column(name = "powerType")
+    private String powerType;            //충전량
+
+    public EVStation(Long id, String name, String roadAddress, String latitude,
+                     String longitude, String chargertype, String useTime, String stat,
+                     String statUpdDt, String busiCall, String parkingFree, String powerType) {
         this.id = id;
         this.name = name;
         this.roadAddress = roadAddress;
@@ -59,6 +64,7 @@ public class EVStation {
         this.statUpdDt = statUpdDt;
         this.busiCall = busiCall;
         this.parkingFree = parkingFree;
+        this.powerType = powerType;
     }
 
 /*public long getId(){
