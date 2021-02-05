@@ -11,6 +11,19 @@
     <th:block th:replace="/header"></th:block>
     <div id="map" style="width:100%;height:900px;"></div>
 
+    <div class="category">
+        <ul>
+            <li id="EVChargerStationMenu" onclick="changeMarker('EVChargerStaion')">
+                <span class="ico_comm ico_EVChargerStation"></span>
+                충전소
+            </li>
+            <li id="repairShopMenu" onclick="changeMarker('repairShop')">
+                <span class="ico_comm ico_repairShop"></span>
+                정비소
+            </li>
+        </ul>
+    </div>
+
     <script th:inline="javascript">
 
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div
@@ -54,15 +67,18 @@
             map.setCenter(locPosition);
         }
 
-        //마커를 담기위한 배열
-        var markers = [];
+        //마커를 담기위한 배열 충전소 마커와 정비소 마커
+        var chargerMarkers = [];
+        var repairShopMarkers = [];
 
         //마커 사이즈, 이미지
         var imageSize = new kakao.maps.Size(30, 41);
         var blueMarkerImg = "/img/markerblue01.png";
+        var repairShopImg = "img/repairShopMarker01.png"
 
         //카카오 MarkerImage 객체에 사이즈와 이미지를 넣기
         var markerImage = new kakao.maps.MarkerImage(blueMarkerImg, imageSize);
+        var repairShopMarkerImage = new kakao.maps.MarkerImage(repairShopImg, imageSize);
 
         // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
         var infowindow = new kakao.maps.InfoWindow({
@@ -70,8 +86,9 @@
             removable : true
         });
 
-        var geocoder = new kakao.maps.services.Geocoder();
+        changeMarker('EVChargerStaion');
 
+        //============================================== DB에서 EVStation 테이블 값을 모두 가져와서 반복문으로 마커를 생성하는 부분 =========================================
         var stations = new Array();
         stations = [[${stations}]];
 
@@ -96,22 +113,124 @@
                     //displayInfowindow_coord(marker);
 
                     //html로 표시될 인포 윈도우의 내용
-                    setInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles);
+                    setEVChargerInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles);
                 });
             })(marker, station['location'],station['roadAddress'],station['standardChargerNum'],station['normalChargerNum'],station['supportedVehicles']);
 
-            markers.push(marker)
+            chargerMarkers.push(marker)
+        }
+        //=========================================================================================================================================================
+
+        //============================================== DB에서 repairShop 테이블 값을 모두 가져와서 반복문으로 마커를 생성하는 부분 =========================================
+        var shops = new Array();
+        shops = [[${repairshops}]];
+
+        for (var i = 0; i < shops.length; i++) {
+            var shop = shops[i];
+
+            var coords = new kakao.maps.LatLng(shop['latitude'], shop['longitude']);
+
+            var marker = new kakao.maps.Marker({
+                //map: map,
+                position: coords,
+                image : repairShopMarkerImage
+            });
+
+            (function (marker, name, roadAddress, phonenumber, latitude, longtitude) {
+                kakao.maps.event.addListener(marker, 'mouseover', function () {
+                    displayInfowindow(marker, name);
+                });
+
+                //마커 클릭 이벤트, 마커의 위도 경도 나타냄
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    //displayInfowindow_coord(marker);
+
+                    //html로 표시될 인포 윈도우의 내용
+                    setRepairShopInfowindow(infowindow, name, roadAddress, phonenumber, latitude, longtitude);
+                });
+            })(marker, shop['name'],shop['roadAddress'],shop['phoneNumber'],shop['latitude'],shop['longtitude']);
+
+            repairShopMarkers.push(marker)
+        }
+        //=====================================================================================================================================================
+
+        var EVStationClusterer;
+        var repairShopClusterer;
+
+        //클러스터로 최적화를 진행합니다. 클러스터란 맵을 축소하면 입접한 마커들은 묶어서 보여주는 기능입니다.
+        function setEVStationMarkers() {
+            EVStationClusterer = new kakao.maps.MarkerClusterer({
+                map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+                markers: chargerMarkers,
+                averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+                minLevel: 8, // 클러스터 할 최소 지도 레벨
+                disableClickZoom: false
+            });
         }
 
-        var clusterer = new kakao.maps.MarkerClusterer({
-            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
-            markers: markers,
-            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-            minLevel: 8, // 클러스터 할 최소 지도 레벨
-            disableClickZoom: false
-        });
+        //클러스터로 최적화를 진행합니다. 클러스터란 맵을 축소하면 입접한 마커들은 묶어서 보여주는 기능입니다.
+        function setRepairShopMarkers() {
+            repairShopClusterer = new kakao.maps.MarkerClusterer({
+                map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+                markers: repairShopMarkers,
+                averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+                minLevel: 8, // 클러스터 할 최소 지도 레벨
+                disableClickZoom: false
+            });
+        }
 
-        clusterer.addMarkers(markers);
+        var Clusterer;
+        function setMarkers(markers) {
+            Clusterer = new kakao.maps.MarkerClusterer({
+                map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+                markers: markers,
+                averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+                minLevel: 8, // 클러스터 할 최소 지도 레벨
+                disableClickZoom: false
+            });
+        }
+
+        function changeMarker(type){
+
+            var EVChargerStaionMenu = document.getElementById('EVChargerStationMenu');
+            var repairShopMenu = document.getElementById('repairShopMenu');
+
+            // 충전소 카테고리가 클릭됐을 때
+            if (type === 'EVChargerStaion') {
+
+                // 충전소 카테고리를 선택된 스타일로 변경하고
+                EVChargerStaionMenu.className = 'menu_selected';
+
+                // 정비소 카테고리는 선택되지 않은 스타일로 바꿉니다
+                repairShopMenu.className = '';
+                /*if(repairShopClusterer)
+                {
+                    repairShopClusterer.clear();
+                }
+                setEVStationMarkers();*/
+
+                if(Clusterer) {
+                    Clusterer.clear();
+                }
+                setMarkers(chargerMarkers);
+
+            } else if (type === 'repairShop') { // 정비소 카테고리가 클릭됐을 때
+
+                EVChargerStaionMenu.className = '';
+                repairShopMenu.className = 'menu_selected';
+
+                /*if(EVStationClusterer)
+                {
+                    EVStationClusterer.clear();
+                }
+                setRepairShopMarkers();*/
+
+                if(Clusterer) {
+                    Clusterer.clear();
+                }
+                setMarkers(repairShopMarkers);
+            }
+        }
 
         //마우스 올렸을때의 인포윈도우
         function displayInfowindow(marker, location) {
@@ -121,8 +240,13 @@
             infowindow.open(map, marker);
         }
 
-        //인포윈도우 생성
-        function setInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles, latitude, longtitude)
+        //확대 또는 축소가 되면 인포 윈도우가 사라지도록 이벤트 등록
+        kakao.maps.event.addListener(map, 'zoom_changed', function() {
+            infowindow.close();
+        });
+
+        //충전소 인포윈도우 생성
+        function setEVChargerInfowindow(infowindow, location, roadAddress, standardChargerNum, normalChargerNum, supportedVehicles, latitude, longtitude)
         {
             var link = "https://map.kakao.com/link/map/" + location +","+latitude+","+longtitude;
             infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ location + " 충전소" + "<br>" + '</div>' +
@@ -133,11 +257,19 @@
 
             $('.link1').prop('href', link);
         }
+        //정비소 인포윈도우 생성
+        function setRepairShopInfowindow(infowindow, name, roadAddress, phonenumber, latitude, longtitude)
+        {
+            var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longtitude;
+            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>도로명주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>전화번호 : </strong>'  + phonenumber + "<br>" + '</div>' +
+                '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
 
-        //확대 또는 축소가 되면 인포 윈도우가 사라지도록 이벤트 등록
-        kakao.maps.event.addListener(map, 'zoom_changed', function() {
-            infowindow.close();
-        });
+            $('.link1').prop('href', link);
+        }
+
+
     </script>
 </div>
 
