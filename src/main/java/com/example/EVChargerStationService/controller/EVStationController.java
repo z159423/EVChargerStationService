@@ -17,8 +17,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -27,7 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @Controller
 @Slf4j
@@ -43,6 +52,9 @@ public class EVStationController {
     //전기차 충전소 위치정보 페이지
     @GetMapping("/EVStationMap")
     public String EVChargingStationMap(Model model) {
+
+        evStationRepository.deleteAll();
+        EVStationAPIread();
         //충전소 DB에서 가져오기
         List<EVStation> EVStationList = new ArrayList<>();
         // evStationRepository.findAll().forEach(e -> EVStationList.add(e));
@@ -123,6 +135,102 @@ public class EVStationController {
             e.printStackTrace();
         }
         return result+"</xmp>";
+
+    }
+
+    public String EVStationAPIread(){
+
+        int page=1;
+        try {
+
+            while(true) {
+
+                //parsing할 url 지정
+
+                String url = "http://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=eTj%2BoTexoAoUQ5MNZDEb4qxLyrEY9pD5PcD1ogXd4cc1QuwQWlqBq1E7ehDcBcSd3%2BcAV5jbKJaIhLEzK2OoWw%3D%3D&pageNo=1&numOfRows=3400";
+
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+                DocumentBuilder dBuilder  = dbFactory.newDocumentBuilder();
+
+                Document doc = dBuilder.parse(url);
+
+
+
+                //root tag
+
+                doc.getDocumentElement().normalize();
+
+                System.out.println("Root Element : "+doc.getDocumentElement().getNodeName());
+
+
+
+                // parsing tag
+
+                NodeList nodeList = doc.getElementsByTagName("item");
+
+                System.out.println("파싱할 리스트 수 : "+ nodeList.getLength());
+
+                for(int temp =0; temp<nodeList.getLength(); temp++) {
+
+                    Node nNode = nodeList.item(temp);
+
+                    if(nNode.getNodeType()==Node.ELEMENT_NODE) {
+
+                        Element element = (Element) nNode;
+
+                        setstationvalue(getTagValue("statNm", element), getTagValue("lat", element), getTagValue("lng", element),
+                                getTagValue("addr", element), getTagValue("chgerType", element),getTagValue("useTime", element),
+                                getTagValue("stat", element), getTagValue("statUpdDt", element), getTagValue("busiCall", element),
+                                getTagValue("parkingFree", element));
+
+                    }//if
+
+                }//for
+
+                page += 1;
+
+                if(page >= 2) {
+
+                    break;
+
+                }
+
+            }//while
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+        return "redirect:/EVStationMap";
+    }//main
+
+    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree){
+
+        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree);
+
+        /*evstation.setlatitude(lat);
+        evstation.setlongitude(lng);
+        evstation.setRoadAddress(addr);
+        evstation.setchargertype(chgerType);*/
+
+        evStationRepository.save(evstation);
+    }
+
+    private static String getTagValue(String tag, Element ele) {
+
+        NodeList nodeList = ele.getElementsByTagName(tag).item(0).getChildNodes();
+
+        Node nValue = (Node) nodeList.item(0);
+
+        if(nValue == null) {
+
+            return null;
+
+        }
+
+        return nValue.getNodeValue();
 
     }
 }
