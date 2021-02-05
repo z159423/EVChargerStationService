@@ -40,19 +40,18 @@ public class RemoteController {
 
     }
 
-
-
     @Autowired
     private EVStationRepository evStationRepository;
 
+    public void setstationvalue(String name, String lat, String lng, String addr, String chgerType, String useTime, String stat, String statUpdDt, String busiCall, String parkingFree){
 
-    public void setstationvalue(String lat, String lng, String addr, String chgerType){
+        EVStation evstation = new EVStation(null,name,addr, lat,lng,chgerType,useTime,stat,statUpdDt,busiCall,parkingFree);
 
-        EVStation evstation = new EVStation();
-        evstation.setlatitude(lat);
+        /*evstation.setlatitude(lat);
         evstation.setlongitude(lng);
         evstation.setRoadAddress(addr);
-        evstation.setchargertype(chgerType);
+        evstation.setchargertype(chgerType);*/
+
         evStationRepository.save(evstation);
     }
     @GetMapping("/EVStationtest")
@@ -97,8 +96,10 @@ public class RemoteController {
 
                         Element element = (Element) nNode;
 
-                        setstationvalue(getTagValue("lat", element), getTagValue("lng", element),
-                                        getTagValue("addr", element), getTagValue("chgerType", element));
+                        setstationvalue(getTagValue("statNm", element), getTagValue("lat", element), getTagValue("lng", element),
+                                        getTagValue("addr", element), getTagValue("chgerType", element),getTagValue("useTime", element),
+                                        getTagValue("stat", element), getTagValue("statUpdDt", element), getTagValue("busiCall", element),
+                                        getTagValue("parkingFree", element));
 
                     }//if
 
@@ -119,6 +120,6 @@ public class RemoteController {
             e.printStackTrace();
 
         }
-    return "/EVStationMAP";
+    return "redirect:/EVStationMap";
     }//main
 }

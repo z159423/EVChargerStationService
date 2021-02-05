@@ -103,9 +103,9 @@
                 image : markerImage
             });
 
-            (function (marker, location,roadAddress,standardChargerNum,normalChargerNum,supportedVehicles) {
+            (function (marker, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree) {
                 kakao.maps.event.addListener(marker, 'mouseover', function () {
-                    displayInfowindow(marker, location, "충전소");
+                    displayInfowindow(marker, name, "충전소");
                 });
 
                 //마커 클릭 이벤트, 마커의 위도 경도 나타냄
@@ -113,9 +113,10 @@
                     //displayInfowindow_coord(marker);
 
                     //html로 표시될 인포 윈도우의 내용
-                    setEVChargerInfowindow(infowindow, location, roadAddress, standardChargerNum,normalChargerNum,supportedVehicles);
+                    setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargertype, useTime,stat,statUpdDt,busiCall,parkingFree);
                 });
-            })(marker, station['location'],station['roadAddress'],station['standardChargerNum'],station['normalChargerNum'],station['supportedVehicles']);
+            })(marker, station['name'], station['roadAddress'], station['latitude'],station['longitude'],
+                station['chargertype'],station['useTime'],station['stat'],station['statUpdDt'],station['busiCall'],station['parkingFree']);
 
             chargerMarkers.push(marker)
         }
@@ -233,8 +234,8 @@
         }
 
         //마우스 올렸을때의 인포윈도우
-        function displayInfowindow(marker, location, value1) {
-            var content = '<div style="padding:5px;z-index:1;">' + location + value1 + '</div>';
+        function displayInfowindow(marker, name, value1) {
+            var content = '<div style="padding:5px;z-index:1;">' + name + value1 + '</div>';
 
             infowindow.setContent(content);
             infowindow.open(map, marker);
@@ -246,17 +247,22 @@
         });
 
         //충전소 인포윈도우 생성
-        function setEVChargerInfowindow(infowindow, location, roadAddress, standardChargerNum, normalChargerNum, supportedVehicles, latitude, longtitude)
+        function setEVChargerInfowindow(infowindow, name, roadAddress, latitude, longitude, chargerType, useTime, stat, statUpdDt, busiCall, parkingFree)
         {
-            var link = "https://map.kakao.com/link/map/" + location +","+latitude+","+longtitude;
-            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ location + " 충전소" + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>도로명주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>급속충전기 : </strong>'  + standardChargerNum + '<strong> 완속충전기 : </strong>' + normalChargerNum + "<br>" + '</div>' +
-                '<div style="padding:5px;font-size:12px;">' + '<strong>지원차종 : </strong>'  + supportedVehicles + "<br><br>" + '</div>' +
+            var link = "https://map.kakao.com/link/map/" + name +","+latitude+","+longitude;
+            infowindow.setContent('<div align="center" style="padding:5px;font-size:15px;">'+ name + " 충전소" + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>주소 : </strong>'  + roadAddress + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>사용 가능 시간 : </strong>'  + useTime + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 타입 : </strong>'  + chargerType + "<br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>충전기 상태 : </strong>'  + stat + "<br><br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>업데이트 시간 : </strong>'  + statUpdDt + "<br><br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>관리자 전화번호 : </strong>'  + busiCall + "<br><br>" + '</div>' +
+                '<div style="padding:5px;font-size:12px;">' + '<strong>주차장 유료 여부: </strong>'  + parkingFree + "<br><br>" + '</div>' +
                 '<div><a class="link1" href="" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a></div>');
 
             $('.link1').prop('href', link);
         }
+
         //정비소 인포윈도우 생성
         function setRepairShopInfowindow(infowindow, name, roadAddress, phonenumber, latitude, longtitude)
         {
